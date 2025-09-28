@@ -4,7 +4,7 @@ Tools for building Lattica applications
 ## Run Guide
 
 ### Option A: Prebuilt binaries (recommended)
-- Required: `--port <u16>`
+- Required: `--port <u16>`  
 - Optional: `--key-path <FILE>` (defaults to `./secret.key`; auto-generated if missing)
 
 macOS/Linux:
