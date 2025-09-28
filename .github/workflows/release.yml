@@ -69,7 +69,7 @@ jobs:
           cp "$RV" dist/
           cd dist
           if [[ "${{ matrix.os }}" == windows-latest ]]; then
-            zip -9 "lattica-tools-${{ matrix.target }}.zip" relay${{ matrix.ext }} rendezvous${{ matrix.ext }}
+            powershell.exe -NoLogo -NoProfile -Command "Compress-Archive -Path 'relay${{ matrix.ext }}','rendezvous${{ matrix.ext }}' -DestinationPath 'lattica-tools-${{ matrix.target }}.zip' -Force"
           else
             tar -czf "lattica-tools-${{ matrix.target }}.tar.gz" relay${{ matrix.ext }} rendezvous${{ matrix.ext }}
           fi
