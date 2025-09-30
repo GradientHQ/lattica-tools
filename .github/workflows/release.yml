@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   build:
     name: build (${{ matrix.os }} - ${{ matrix.target }})
@@ -58,6 +58,10 @@ jobs:
         working-directory: rendezvous
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Build bootstrap
+        working-directory: bootstrap
+        run: cargo build --release --target ${{ matrix.target }}
+
       - name: Package artifacts
         shell: bash
         run: |
@@ -65,15 +69,17 @@ jobs:
           mkdir -p dist
           RELAY=relay/target/${{ matrix.target }}/release/relay${{ matrix.ext }}
           RV=rendezvous/target/${{ matrix.target }}/release/rendezvous${{ matrix.ext }}
+          BT=bootstrap/target/${{ matrix.target }}/release/bootstrap{{ matrix.ext }}
           cp "$RELAY" dist/
           cp "$RV" dist/
+          cp "$BT" dist/
           cd dist
           if [[ "${{ matrix.os }}" == windows-latest ]]; then
-            powershell.exe -NoLogo -NoProfile -Command "Compress-Archive -Path 'relay${{ matrix.ext }}','rendezvous${{ matrix.ext }}' -DestinationPath 'lattica-tools-${{ matrix.target }}.zip' -Force"
+            powershell.exe -NoLogo -NoProfile -Command "Compress-Archive -Path 'relay${{ matrix.ext }}','rendezvous${{ matrix.ext }}','bootstrap${{ matrix.ext }}' -DestinationPath 'lattica-tools-${{ matrix.target }}.zip' -Force"
           else
-            tar -czf "lattica-tools-${{ matrix.target }}.tar.gz" relay${{ matrix.ext }} rendezvous${{ matrix.ext }}
+            tar -czf "lattica-tools-${{ matrix.target }}.tar.gz" relay${{ matrix.ext }} rendezvous${{ matrix.ext }} bootstrap${{ matrix.ext }}
           fi
-      
+
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
