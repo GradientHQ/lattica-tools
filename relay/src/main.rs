@@ -46,6 +46,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let local_key: identity::Keypair = load_or_generate_keypair(opt.key_path)?;
     println!("Local PeerId: {}", local_key.public().to_peer_id());
 
+    let mut relay_config = relay::Config::default();
+    relay_config.max_reservations = 1000000;
+    relay_config.reservation_rate_limiters = vec![];
+
+    relay_config.max_circuits = 1000000;
+    relay_config.circuit_src_rate_limiters = vec![];
+
     let mut swarm = libp2p::SwarmBuilder::with_existing_identity(local_key)
         .with_tokio()
         .with_tcp(
@@ -56,7 +63,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .with_quic()
         .with_behaviour(|key| Behaviour {
             autonat: autonat::v2::server::Behaviour::default(),
-            relay: relay::Behaviour::new(key.public().to_peer_id(), Default::default()),
+            relay: relay::Behaviour::new(key.public().to_peer_id(), relay_config),
             ping: ping::Behaviour::new(ping::Config::new()),
             identify: identify::Behaviour::new(identify::Config::new(
                 "/lattica/1.0.0".to_string(),
