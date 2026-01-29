@@ -67,7 +67,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .with_behaviour(|key| Behaviour {
             ping: ping::Behaviour::new(ping::Config::new()),
             identify: identify::Behaviour::new(identify::Config::new(
-                "/lattica/1.0.0".to_string(),
+                "/lattica-common/1.0.0".to_string(),
                 key.public(),
             )),
             gossipsub,
