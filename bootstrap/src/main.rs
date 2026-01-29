@@ -47,8 +47,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let local_key: identity::Keypair = load_or_generate_keypair(opt.key_path)?;
     println!("Local PeerId: {}", local_key.public().to_peer_id());
 
-    let gossipsub_config = gossipsub::Config::default();
-    let mut gossipsub = gossipsub::Behaviour::new(MessageAuthenticity::Signed(local_key.clone()), gossipsub_config).unwrap();
+    let gossipsub_config = gossipsub::ConfigBuilder::default()
+        .flood_publish(true)
+        .build()
+        .expect("Valid config");
+
+    let mut gossipsub = gossipsub::Behaviour::new(MessageAuthenticity::Signed(local_key.clone()), gossipsub_config)?;
     let topic = gossipsub::IdentTopic::new("p2p-circuit-broadcast");
     gossipsub.subscribe(&topic).unwrap();
 
